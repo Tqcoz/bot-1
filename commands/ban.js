@@ -1,34 +1,34 @@
-const discord = require("discord.js");
-const bot = new discord.Client();
-const fs = require ("fs");
+const {RichEmbed} = require('discord.js');
+const {caseNumber} = require('../util/caseNumber.js');
+const {parseUser} = require('../util/parseUser.js');
+const settings = require('../settings.json');
+exports.run = async (client, message, args) => {
+  const user = message.mentions.users.first();
+  parseUser(message, user);
+  const modlog = client.channels.find('name', 'mod-log');
+  const caseNum = await caseNumber(client, modlog);
+  if (!modlog) return message.reply('I cannot find a mod-log channel');
+  if (message.mentions.users.size < 1) return message.reply('You must mention someone to ban them.').catch(console.error);
+  // message.guild.ban(user, 2);
 
-module.exports.run = async (bot, message, args) => {
-    let prefix = ">";
-         
-    let bUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
-    if(!bUser) return message.channel.send("Can't find user!");
-    let bReason = args.join(" ").slice(22);
-    if(!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send("You can't ban this person. If you think this is an error, contact server Administrators.");
-    if(bUser.hasPermission("MANAGE_MESSAGES")) return message.channel.send("That person can't be banned.");
-     let banEmbed = new discord.RichEmbed()
-    .setDescription("~New Ban~")
-    .setColor("#8B0000")
-    .addField("Banned User", `${bUser} with ID ${bUser.id}`)
-    .addField("Banned By", `<@${message.author.id}> with ID ${message.author.id}`)
-    .addField("Banned In", message.channel)
-    .addField("Time", message.createdAt)
-    .addField("Reason", bReason);
-     let banChannel = message.guild.channels.find(`name`, "mod-logs");
-    if(!banChannel) return message.channel.send(`Can't find mod-logs channel. Run ${prefix}setup for help.`);
-    message.delete().catch(O_o=>{});
-    message.guild.member(bUser).ban(bReason);
-    banChannel.send(banEmbed);
-    if(banChannel) return message.channel.send(`User <@${bUser.id}> banned.`)
-    
+  const reason = args.splice(1, args.length).join(' ') || `Awaiting moderator's input. Use ${settings.prefix}reason ${caseNum} <reason>.`;
+  const embed = new RichEmbed()
+  .setColor(0x00AE86)
+  .setTimestamp()
+  .setDescription(`**Action:** Ban\n**Target:** ${user.tag}\n**Moderator:** ${message.author.tag}\n**Reason:** ${reason}`)
+  .setFooter(`Case ${caseNum}`);
+  return client.channels.get(modlog.id).send({embed});
+};
 
-}
+exports.conf = {
+  enabled: true,
+  guildOnly: false,
+  aliases: [],
+  permLevel: 2
+};
 
-module.exports.help = {
-    name: "ban"
-
-}
+exports.help = {
+  name: 'ban',
+  description: 'Bans the mentioned user.',
+  usage: 'ban [mention] [reason]'
+};
