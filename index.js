@@ -2,6 +2,7 @@ const botconfig = require("./botconfig.json");
 const discord = require("discord.js");
 const bot = new discord.Client();
 const fs = require ("fs");
+token = process.env.token
 
 bot.commands = new discord.Collection
 fs.readdir("./commands/", (err, files) => {
@@ -42,4 +43,4 @@ bot.on("message", async message => {
 });
 
 
-bot.login(botconfig.token);
+bot.login(token);
