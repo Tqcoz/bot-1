@@ -2,7 +2,6 @@ const discord = require("discord.js");
 const bot = new discord.Client();
 const fs = require ("fs");
 token = process.env.token
-> = prefix
 
 bot.commands = new discord.Collection
 fs.readdir("./commands/", (err, files) => {
@@ -32,7 +31,7 @@ bot.on("message", async message => {
     if(message.author.bot) return;
     if(message.channel.type === "dm") return;
 
-    let prefix = prefix;
+    let prefix = >;
     let messageArray = message.content.split(" ");
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
