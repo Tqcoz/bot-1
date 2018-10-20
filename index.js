@@ -1,4 +1,4 @@
-const discord = require("discord.js");
+xconst discord = require("discord.js");
 const bot = new discord.Client();
 const fs = require ("fs");
 token = process.env.token
@@ -31,7 +31,7 @@ bot.on("message", async message => {
     if(message.author.bot) return;
     if(message.channel.type === "dm") return;
 
-    let prefix = botconfig.prefix;
+    let prefix = process.env.prefix;
     let messageArray = message.content.split(" ");
     let cmd = messageArray[0];
     let args = messageArray.slice(1);
