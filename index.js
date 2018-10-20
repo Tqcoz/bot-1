@@ -1,4 +1,4 @@
-xconst discord = require("discord.js");
+const discord = require("discord.js");
 const bot = new discord.Client();
 const fs = require ("fs");
 token = process.env.token
